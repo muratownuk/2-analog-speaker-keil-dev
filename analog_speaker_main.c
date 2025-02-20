@@ -1,7 +1,7 @@
 /*
-    digital_speaker_main: 
+    analog_speaker_main: 
     the main routine where the program starts. the C8051F005 oscillator 
-    frequency is default (2MHz). 
+    frequency is set to internal 16MHz.  
 */ 
 /*
     includes 
@@ -10,17 +10,17 @@
 #include "on_off.h" 
 #include "C8051F005_Init.h" 
 #include "C8051F005_Routines.h" 
-#include "digital_speaker.h" 
+#include "analog_speaker.h" 
 
 /*
     defines 
 */
-#define     PRESSED     1
+
 
 /*
     sbit definitions 
 */
-sbit    button  = P1^7;                 // 0 = PRESSED 
+ 
 
 /*
     main routine 
@@ -29,13 +29,10 @@ void main(void){
     
     vWatchdog(OFF);                     // turn off watchdog timer 
     vPort_Init();                       // initialize used port(s) 
-    vTimer1_Init();                     // initialize timer 1 
-
-    while(button!=PRESSED)              // start button (here until pressed) 
-        ;
+                                        // initialize timer 3  
 
     vGlobalInterrupts(ON);              // enable global interrupts 
-    vTimer1(ON);                        // start timer 1 
+                                        // start timer 3  
 
     while(1) 
         ;                               // forever loop 
