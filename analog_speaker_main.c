@@ -13,29 +13,22 @@
 #include "analog_speaker.h" 
 
 /*
-    defines 
-*/
-
-
-/*
-    sbit definitions 
-*/
- 
-
-/*
     main routine 
 */
 void main(void){ 
     
     vWatchdog(OFF);                     // turn off watchdog timer 
-    vPort_Init();                       // initialize used port(s) 
+    vOSC_Init();                        // initialize oscillator 
+    vDAC0_Init();                       // initialize DAC0  
                                         // initialize timer 3  
 
     vGlobalInterrupts(ON);              // enable global interrupts 
-                                        // start timer 3  
+    vTimer3(ON);                        // start timer 3  
 
     while(1) 
         ;                               // forever loop 
 
 }
+
+
 

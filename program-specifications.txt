@@ -26,3 +26,4 @@
           - index the sine table for a 16-bit value.  
           - set the DAC0 buffer with the unipolar 16-bit value. 
       - modify the frequency according to the count variable. 
+
