@@ -20,10 +20,15 @@
       - global interrupt enable/disable 
       - timer 3 start/stop 
 
-  - timer 1 interrupt service routine 
-      - toggles P1.0 bit that is connected to speaker through MOSFET.
-      - this happens with variable frequency to create the effect of siren 
-        sound.  
+  - timer 3 interrupt service routine 
+      - clear the timer3 overflow flag.
+      - set the DAC with the new sample with Set_DAC routine.
+          - use phase accumulator to determine the index of the sine table. 
+          - index the sine table for a 16-bit value.  
+          - set the DAC0 buffer with the unipolar 16-bit value. 
+      - modify the frequency according to the count variable. 
+
+    
 
 
 
