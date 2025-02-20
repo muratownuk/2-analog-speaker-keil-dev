@@ -20,6 +20,13 @@ void vPort_Init(void);
 void vTimer1_Init(void); 
 
 /*
+    16-bit SFR defs 
+*/
+sfr16 TMR3RL    = 0x92;                 // timer 3 reload address (low byte) 
+sfr16 TMR3      = 0x94;                 // timer 3 counter address (LB) 
+sfr16 DAC0      = 0xD2;                 // DAC0 data word reg. address (LB)
+
+/*
     routines 
 */
 /*

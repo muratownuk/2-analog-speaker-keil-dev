@@ -4,7 +4,7 @@
     /*
         defines
     */
-    #define SYSCLK 2000000              // chip operating frequency 
+    #define SYSCLK 16000000             // chip operating frequency 
 
     #ifndef _C8051F005_INIT_C_
         
