@@ -4,10 +4,9 @@
   - device initialization
       - turn off watchdog timer
       - oscillator 
-          - chip operating frequency of 16.0MHz (internal - C8051F005) 
+          - chip operating frequency of 16MHz (internal - C8051F005) 
       - timer 3 
           - timer 3 interrupt enabled 
-          - timer 3 in auto-reload mode  
           - timer 3 uses SYSCLK as timebase 
           - takes reload value as parameter 
       - Digital-to-Analog Converter (DAC) 
@@ -27,10 +26,3 @@
           - index the sine table for a 16-bit value.  
           - set the DAC0 buffer with the unipolar 16-bit value. 
       - modify the frequency according to the count variable. 
-
-    
-
-
-
-
-

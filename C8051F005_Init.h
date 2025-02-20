@@ -10,11 +10,11 @@
         
         // function prototypes (for external use) 
         extern void vWatchdog(bit status); 
-        extern void vPort_Init(void); 
-        extern void vTimer1_Init(void); 
+        extern void vOSC_Init(void); 
+        extern void vTimer3_Init(unsigned int counts); 
+        extern void vDAC0_Init(void); 
 
     #endif
 
 #endif
-
  
