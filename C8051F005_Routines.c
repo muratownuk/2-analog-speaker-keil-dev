@@ -16,7 +16,7 @@
     function prototypes
 */
 void vGlobalInterrupts(bit status);
-void vTimer1(bit status);
+void vTimer3(bit status);
 
 /*
     routines 
@@ -39,19 +39,19 @@ void vGlobalInterrupts(bit status){
 }
 
 /*
-    vTimer1:
-    start/stop timer 1 (TR1). 
+    vTimer3:
+    start/stop timer 3 (TR3). 
     
     parameters: status 
-        bit status: ON to start timer 1, OFF to stop. 
+        bit status: ON to start timer 3, OFF to stop. 
     return    : none
 */
-void vTimer1(bit status){
+void vTimer3(bit status){
 
     if(status==ON) 
-        TR1=ON; 
+        TMR3CN|=0x04; 
     else 
-        TR1=OFF;
+        TMR3CN&=~0x04; 
 
 }
 

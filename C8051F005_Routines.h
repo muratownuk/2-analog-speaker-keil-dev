@@ -5,7 +5,7 @@
         
         // function prototypes (for external use)
         extern void vGlobalInterrupts(bit status);
-        extern void vTimer1(bit status);
+        extern void vTimer3(bit status);
  
     #endif
 
