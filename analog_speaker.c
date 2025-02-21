@@ -1,25 +1,24 @@
 /*
-    digital_speaker: 
+    analog_speaker: 
     this module contains anything related to the speaker side of the project. 
 */
-#define _DIGITAL_SPEAKER_C_ 
+#define _ANALOG_SPEAKER_C_ 
 
 /*
     includes 
 */
 #include "./SiLABS/c8051F000.h" 
-#include "digital_speaker.h" 
+#include "analog_speaker.h" 
 
 /*
     routine prototypes 
 */
 void vTimer1_ISR(void); 
-static void vFrequencyChange(void);
 
 /*
     sbit defintions 
 */
-sbit            SPEAKER     = P1^0; 
+ 
 
 /*
     global variables 
