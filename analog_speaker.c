@@ -100,7 +100,9 @@ void vTimer3_ISR(void) interrupt TIMER3_INT{
 /*
     vSet_DAC: 
     calculates and sets the DAC0 using the sine table. 
-
+    
+    parameters: none
+    return    : none 
 */
 static void vSet_DAC(void){ 
 
@@ -111,7 +113,7 @@ static void vSet_DAC(void){
     
     phase_acc+=PHASE_ADD;               // increment phase accumulator 
     index=phase_acc>>8; 
-    sine_val=SINE_TABLE[index];        // read the table value 
+    sine_val=SINE_TABLE[index];         // read the table value 
 
     /*
         must change sine_val from bipolar (-32768 to 32767) to unipolar (0 to 
@@ -120,5 +122,3 @@ static void vSet_DAC(void){
     DAC0=sine_val^0x8000;               // set DAC0  
     
 } 
-
-
