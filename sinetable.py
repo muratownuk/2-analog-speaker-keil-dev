@@ -20,5 +20,10 @@ for x in y:
     print(hex(x), end=', ')
 print("}", end="")
 
+print("\n\n")
 
+print("{", end="")
+for x in y:
+    print("0x%04X" %x, end=', ')
+print("}", end="")
 
