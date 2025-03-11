@@ -25,7 +25,6 @@ void vDAC0_Init(void);
 */
 sfr16 TMR3RL    = 0x92;                 // timer 3 reload address (low byte) 
 sfr16 TMR3      = 0x94;                 // timer 3 counter address (LB) 
-sfr16 DAC0      = 0xD2;                 // DAC0 data word reg. address (LB)
 
 /*
     routines 
@@ -104,6 +103,7 @@ void vDAC0_Init(void){
     DAC0CN|=0x84;                       // DAC0EN=1 and DAC0DF=1xx                     
     
 }
+
 
 
 
