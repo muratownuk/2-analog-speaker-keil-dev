@@ -19,8 +19,9 @@ void main(void){
     
     vWatchdog(OFF);                     // turn off watchdog timer 
     vOSC_Init();                        // initialize oscillator 
-    vDAC0_Init();                       // initialize DAC0  
-                                        // initialize timer 3  
+    vDAC0_Init();                       // initialize DAC0
+    // initialize timer 3  
+    vTimer3_Init(SYSCLK/SAMPLE_RATE_DAC);    
 
     vGlobalInterrupts(ON);              // enable global interrupts 
     vTimer3(ON);                        // start timer 3  
@@ -29,6 +30,5 @@ void main(void){
         ;                               // forever loop 
 
 }
-
 
 
