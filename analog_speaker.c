@@ -13,77 +13,112 @@
 /*
     routine prototypes 
 */
-void vTimer1_ISR(void); 
+static void vSet_DAC(void); 
+void vTimer3_ISR(void);
 
 /*
-    sbit defintions 
+    16-bit SFR defs 
 */
- 
+sfr16 DAC0      = 0xD2;                 // DAC0 data word reg. address (LB)
 
 /*
     global variables 
 */
-unsigned char   count       = COUNT_MIN; 
-unsigned char   count_lead  = COUNT_MIN+1; 
-bit             INC_DEC     = INC; 
-unsigned int    count_ISR   = ISR_COUNT;        // 500  
+unsigned char   count       = 0; 
+unsigned int    freq        = LOW_FREQ; 
+unsigned int    PHASE_ADD   = (LOW_FREQ*PHASE_PRECISION)/SAMPLE_RATE_DAC; 
+
+int code SINE_TABLE[256]={
+    0x0000, 0x0324, 0x0647, 0x096A, 0x0C8B, 0x0FAB, 0x12C7, 0x15E1, 0x18F8, 
+    0x1C0B, 0x1F19, 0x2223, 0x2527, 0x2826, 0x2B1E, 0x2E10, 0x30FB, 0x33DE, 
+    0x36B9, 0x398C, 0x3C56, 0x3F16, 0x41CD, 0x447A, 0x471C, 0x49B3, 0x4C3F, 
+    0x4EBF, 0x5133, 0x539A, 0x55F4, 0x5842, 0x5A81, 0x5CB3, 0x5ED6, 0x60EB, 
+    0x62F1, 0x64E7, 0x66CE, 0x68A5, 0x6A6C, 0x6C23, 0x6DC9, 0x6F5E, 0x70E1, 
+    0x7254, 0x73B5, 0x7503, 0x7640, 0x776B, 0x7883, 0x7989, 0x7A7C, 0x7B5C, 
+    0x7C29, 0x7CE2, 0x7D89, 0x7E1C, 0x7E9C, 0x7F08, 0x7F61, 0x7FA6, 0x7FD7, 
+    0x7FF5, 0x7FFF, 
+    0x7FF5, 0x7FD7, 0x7FA6, 0x7F61, 0x7F08, 0x7E9C, 0x7E1C, 0x7D89, 0x7CE2, 
+    0x7C29, 0x7B5C, 0x7A7C, 0x7989, 0x7883, 0x776B, 0x7640, 0x7503, 0x73B5, 
+    0x7254, 0x70E1, 0x6F5E, 0x6DC9, 0x6C23, 0x6A6C, 0x68A5, 0x66CE, 0x64E7, 
+    0x62F1, 0x60EB, 0x5ED6, 0x5CB3, 0x5A81, 0x5842, 0x55F4, 0x539A, 0x5133, 
+    0x4EBF, 0x4C3F, 0x49B3, 0x471C, 0x447A, 0x41CD, 0x3F16, 0x3C56, 0x398C, 
+    0x36B9, 0x33DE, 0x30FB, 0x2E10, 0x2B1E, 0x2826, 0x2527, 0x2223, 0x1F19, 
+    0x1C0B, 0x18F8, 0x15E1, 0x12C7, 0x0FAB, 0x0C8B, 0x096A, 0x0647, 0x0324, 
+    0x0000, 
+    0xFCDB, 0xF9B8, 0xF695, 0xF374, 0xF054, 0xED38, 0xEA1E, 0xE707, 0xE3F4, 
+    0xE0E6, 0xDDDC, 0xDAD8, 0xD7D9, 0xD4E1, 0xD1EF, 0xCF04, 0xCC21, 0xC946, 
+    0xC673, 0xC3A9, 0xC0E9, 0xBE32, 0xBB85, 0xB8E3, 0xB64C, 0xB3C0, 0xB140, 
+    0xAECC, 0xAC65, 0xAA0B, 0xA7BD, 0xA57E, 0xA34C, 0xA129, 0x9F14, 0x9D0E, 
+    0x9B18, 0x9931, 0x975A, 0x9593, 0x93DC, 0x9236, 0x90A1, 0x8F1E, 0x8DAB, 
+    0x8C4A, 0x8AFC, 0x89BF, 0x8894, 0x877C, 0x8676, 0x8583, 0x84A3, 0x83D6, 
+    0x831D, 0x8276, 0x81E3, 0x8163, 0x80F7, 0x809E, 0x8059, 0x8028, 0x800A, 
+    0x8000, 
+    0x800A, 0x8028, 0x8059, 0x809E, 0x80F7, 0x8163, 0x81E3, 0x8276, 0x831D, 
+    0x83D6, 0x84A3, 0x8583, 0x8676, 0x877C, 0x8894, 0x89BF, 0x8AFC, 0x8C4A, 
+    0x8DAB, 0x8F1E, 0x90A1, 0x9236, 0x93DC, 0x9593, 0x975A, 0x9931, 0x9B18, 
+    0x9D0E, 0x9F14, 0xA129, 0xA34C, 0xA57E, 0xA7BD, 0xAA0B, 0xAC65, 0xAECC, 
+    0xB140, 0xB3C0, 0xB64C, 0xB8E3, 0xBB85, 0xBE32, 0xC0E9, 0xC3A9, 0xC673, 
+    0xC946, 0xCC21, 0xCF04, 0xD1EF, 0xD4E1, 0xD7D9, 0xDAD8, 0xDDDC, 0xE0E6, 
+    0xE3F4, 0xE707, 0xEA1E, 0xED38, 0xF054, 0xF374, 0xF695, 0xF9B8, 0xFCDB}
 
 /*
     routines 
 */
 /*
-    vTimer1_ISR: 
-    services the timer 1 interrupt, which in this case, toggle SPEAKER bit 
-    after 100us*count. count_lead equality defines frequency of toggle and is 
-    directly changed with vFrequencyChange routine.   
+    vTimer3_ISR: 
+    services the timer 3 interrupt created by timer 3 overflow. this ISR is 
+    used to schedule the DAC0 output.
+    
+    parameters: none
+    return    : none 
 */
-void vTimer1_ISR(void) interrupt TIMER1_INT{ 
+void vTimer3_ISR(void) interrupt TIMER3_INT{ 
 
-    if(!(--count_ISR)){                 // 100us*ISR_COUNT=50ms 
-        count_ISR=ISR_COUNT;            // reset ISR run counter 
-        vFrequencyChange();             // change freq after above duration
-    }                   
+    TMR3CN&=~0x80;                      // reset timer 3 overflow flag (TF3)
+   
+    vSet_DAC();                         // set DAC
+    
+    // frequency change happens below 
+    count++; 
 
-    count++;                            // 100us increment
+    if(count==FREQ_CHANGE_PRESET){
+        
+        freq+=FREQ_STEP; 
 
-    if (count==count_lead){
-        SPEAKER=~SPEAKER;               // toggle speaker (on/off)
-        count=COUNT_MIN;                // reset 100us increment counter
+        if(freq==HIGH_FREQ) 
+            freq=LOW_FREQ;              // reset siren frequency 
+        
+        // re-calculate PHASE_ADD due to frequency change 
+        PHASE_ADD=(freq*PHASE_PRECISION)/SAMPLE_RATE_DAC; 
+
+        count=0;                        // reset count 
+
     }
 
 }
 
 /*
-    vFrequencyChange: 
-    changes count_lead global variable, effectively increasing/decreasing 
-    frequency of the tone. this will produce siren sound effect.  
+    vSet_DAC: 
+    calculates and sets the DAC0 using the sine table. 
 
 */
-static void vFrequencyChange(void){ 
+static void vSet_DAC(void){ 
 
-    if(INC_DEC){ 
-        count_lead++;                   // effectively decreases frequency 
+    static unsigned phase_acc=0;        // phase accumulator 
 
-        // go into decrement
-        if(count_lead==COUNT_MAX){ 
-            count_lead--;
-            INC_DEC=DEC; 
-        }
+    int sine_val;                       // 16-bit sine value to set for DAC 
+    unsigned char index;                // index for the 256 size sine table 
+    
+    phase_acc+=PHASE_ADD;               // increment phase accumulator 
+    index=phase_acc>>8; 
+    sine_val=SINE_TABLE[index];        // read the table value 
 
-    }
-    else{ 
-        count_lead--;                   // effectively increases frequency 
-
-        // go into increment 
-        if(count_lead==COUNT_MIN){ 
-            count_lead++; 
-            INC_DEC=INC; 
-        }
-
-    }
-
+    /*
+        must change sine_val from bipolar (-32768 to 32767) to unipolar (0 to 
+        65535). this can be done by xor'ing the value by 0x8000 
+    */
+    DAC0=sine_val^0x8000;               // set DAC0  
+    
 } 
 
 
-
- 

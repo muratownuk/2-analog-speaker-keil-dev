@@ -17,12 +17,8 @@
     #ifndef _ANALOG_SPEAKER_C_
         
         // function prototypes (for external use) 
-        extern void vTimer1_ISR(void); 
+        extern void vTimer3_ISR(void); 
   
     #endif
 
 #endif 
-
-
-
- 
