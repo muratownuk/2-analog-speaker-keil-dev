@@ -26,7 +26,8 @@ sfr16 DAC0      = 0xD2;                 // DAC0 data word reg. address (LB)
 */
 unsigned char   count       = 0; 
 unsigned int    freq        = LOW_FREQ; 
-unsigned int    PHASE_ADD   = (LOW_FREQ*PHASE_PRECISION)/SAMPLE_RATE_DAC; 
+unsigned int    PHASE_ADD   = (LOW_FREQ*PHASE_PRECISION)/SAMPLE_RATE_DAC;
+bit             inc_dec     = INC;  
 
 int code SINE_TABLE[256]={
     0x0000, 0x0324, 0x0647, 0x096A, 0x0C8B, 0x0FAB, 0x12C7, 0x15E1, 0x18F8, 
@@ -82,12 +83,24 @@ void vTimer3_ISR(void) interrupt TIMER3_INT{
     count++; 
 
     if(count==FREQ_CHANGE_PRESET){
-        
-        freq+=FREQ_STEP; 
 
-        if(freq==HIGH_FREQ) 
-            freq=LOW_FREQ;              // reset siren frequency 
+        if(inc_dec){                    // frequency low-to-high 
         
+            freq+=FREQ_STEP; 
+
+            if(freq==HIGH_FREQ)         // goto frequency decrement          
+                inc_dec=DEC;  
+        
+        }
+        else{                           // frequency high-to-low 
+
+            freq-=FREQ_STEP; 
+
+            if(freq==LOW_FREQ)          // goto frequency increment 
+                inc_dec=INC; 
+
+        }
+                
         // re-calculate PHASE_ADD due to frequency change 
         PHASE_ADD=(freq*PHASE_PRECISION)/SAMPLE_RATE_DAC; 
 
@@ -122,3 +135,5 @@ static void vSet_DAC(void){
     DAC0=sine_val^0x8000;               // set DAC0  
     
 } 
+
+

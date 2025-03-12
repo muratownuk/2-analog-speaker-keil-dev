@@ -8,6 +8,8 @@
     #define     SAMPLE_RATE_DAC     100000L     // DAC sampling rate
     #define     PHASE_PRECISION     65536       // range of phase accumulator  
     
+    #define     INC                 1 
+    #define     DEC                 0 
     #define     LOW_FREQ            750         // siren low frequency          
     #define     HIGH_FREQ           5000        // siren high freuency 
     #define     FREQ_STEP           1           // change of freq. after ISR 
@@ -22,3 +24,6 @@
     #endif
 
 #endif 
+
+
+
